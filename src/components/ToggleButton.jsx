@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 
-const ToggleButton = ({setPlaceholder}) => {
+const ToggleButton = ({toggle}) => {
     const [active, setActive] = useState("email");
     
   return (
@@ -13,7 +13,7 @@ const ToggleButton = ({setPlaceholder}) => {
         }`}
         onClick={() => {
           setActive("email");
-          setPlaceholder("Логин или email");
+          toggle()
         }}
       >
         Почта
@@ -26,7 +26,7 @@ const ToggleButton = ({setPlaceholder}) => {
         }`}
         onClick={() => {
           setActive("phone");
-          setPlaceholder("+7 (000) 000-00-00");
+          toggle()
         }}
       >
         Телефон

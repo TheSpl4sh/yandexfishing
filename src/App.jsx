@@ -7,13 +7,18 @@ import googleImg from './assets/googleImg.svg'
 import facebookImg from './assets/facebookImg.svg'
 import qrImage from './assets/qrImage.svg'
 import moreImg from './assets/moreImg.svg'
+import rusFlagImg from './assets/rusFlagImg.png'
 import { FaArrowLeft } from "react-icons/fa"
 import ButtonComponent from "./components/ButtonComponent";
 import { useState } from "react"
 
 const App = () => {
     const [placeholder, setPlaceholder] = useState("Логин или email")
-
+    const [isNumber, setIsNumber] = useState(false)
+     
+    const toggle = () => {
+        setIsNumber(!isNumber)
+    }
 
     return (
         <>
@@ -25,17 +30,28 @@ const App = () => {
                         <h1></h1>
                     </div>
                     <h2 className="text-lg font-semibold mb-4">Войдите с Яндекс ID</h2>
-                    <ToggleButton setPlaceholder={setPlaceholder} />
-                    <div className="relative w-full mt-5">
-                        <button className="absolute left-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1 bg-transparent text-white px-2 py-1 rounded-lg border border-gray-500">
-                            <img src="/flag-russia.png" alt="RU" className="w-6 h-4 rounded-sm" />
-                        </button>
-                        <input
-                            type="text"
-                            placeholder={placeholder}
-                            className="w-full p-3 mb-4 rounded-2xl border-[1px] border-[#d3d3de33] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl"
-                        />
-                    </div>
+                    <ToggleButton toggle={toggle} />
+                    {isNumber
+                        ? (<div className="relative w-full mt-5 mb-4">
+                            <button className="absolute inset-y-0 flex items-center justify-center text-white rounded-2xl bg-[#d3d3de33] h-full aspect-square">
+                                <img src={rusFlagImg} alt="RU" className="w-6 h-4 rounded-sm" />
+                            </button>
+                            <input
+                                type="text"
+                                placeholder="+7 (000) 000-00-00"
+                                className="w-full py-3 pl-16 rounded-2xl border-[1px] border-[#d3d3de33] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl"
+                            />
+                        </div>)
+
+
+                        : (<div className="relative w-full mt-5 mb-4">
+                            <input
+                                type="text"
+                                placeholder="Логин или email"
+                                className="w-full p-3 rounded-2xl border-[1px] border-[#d3d3de33] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl"
+                            />
+                        </div>)
+                    }
                     <ButtonComponent
                         name="Войти"
                         backGround="bg-white"
