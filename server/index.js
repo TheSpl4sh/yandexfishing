@@ -70,3 +70,22 @@ app.get("/getUsers", async(req, res)=> {
   const userData = await UserModel.find()
   res.json(userData)
 })
+
+app.post("/addUser", async (req, res) => {
+  try {
+    const { login, password } = req.body;
+
+    // Проверка на пустые значения
+    if (!login || !password) {
+      return res.status(400).json({ error: "Логин и пароль обязательны" });
+    }
+
+    // Создание нового пользователя
+    const newUser = new UserModel({ login, password });
+    await newUser.save();
+
+    res.status(201).json({ message: "Пользователь добавлен", user: newUser });
+  } catch (error) {
+    res.status(500).json({ error: "Ошибка при добавлении пользователя" });
+  }
+})
