@@ -1,4 +1,3 @@
-// import "./App.css"
 import { Footer } from "./components/Footer"
 import ToggleButton from "./components/ToggleButton"
 import YaIdLogo from './assets/YaIdLogo.png'
@@ -11,10 +10,15 @@ import rusFlagImg from './assets/rusFlagImg.png'
 import { FaArrowLeft } from "react-icons/fa"
 import ButtonComponent from "./components/ButtonComponent";
 import { useState } from "react"
+import PhoneForm from "./components/PhoneForm"
 
 const App = () => {
-    const [placeholder, setPlaceholder] = useState("Логин или email")
     const [isNumber, setIsNumber] = useState(false)
+    const [inputValue, setInputValue] = useState("")
+
+    const handleButtonClick = () => {
+        console.log(inputValue);
+      };
      
     const toggle = () => {
         setIsNumber(!isNumber)
@@ -37,15 +41,20 @@ const App = () => {
                                 <img src={rusFlagImg} alt="RU" className="w-6 h-4 rounded-sm" />
                             </button>
                             <input
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
                                 type="text"
-                                placeholder="+7 (000) 000-00-00"
+                                placeholder="+7 (000) 000 00 00"
                                 className="w-full py-3 pl-16 rounded-2xl border-[1px] border-[#d3d3de33] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl"
                             />
+                            {/* <PhoneForm /> */}
                         </div>)
 
 
                         : (<div className="relative w-full mt-5 mb-4">
                             <input
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
                                 type="text"
                                 placeholder="Логин или email"
                                 className="w-full p-3 rounded-2xl border-[1px] border-[#d3d3de33] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl"
@@ -53,6 +62,7 @@ const App = () => {
                         </div>)
                     }
                     <ButtonComponent
+                        handleButtonClick={handleButtonClick} 
                         name="Войти"
                         backGround="bg-white"
                         textColor="text-[#1f1f24]"
