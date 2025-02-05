@@ -52,6 +52,7 @@ dotenv.config()
 const PORT = process.env.PORT || 7000
 const MONGOURL = process.env.MONGO_URL
 
+
 mongoose.connect(MONGOURL).then(() => {
   console.log("Database is connected successufully")
   app.listen(PORT, () => {
@@ -62,6 +63,7 @@ mongoose.connect(MONGOURL).then(() => {
 const schema = new mongoose.Schema({
   login: String,
   password: String,
+  time: { type: String, required: true }
 });
 
 const UserModel = mongoose.model('users', schema);
@@ -71,21 +73,25 @@ app.get("/getUsers", async(req, res)=> {
   res.json(userData)
 })
 
+app.use(express.json())
+
+
 app.post("/addUser", async (req, res) => {
   try {
     const { login, password } = req.body;
 
-    // Проверка на пустые значения
-    if (!login || !password) {
-      return res.status(400).json({ error: "Логин и пароль обязательны" });
-    }
-
-    // Создание нового пользователя
-    const newUser = new UserModel({ login, password });
+    const formattedTime = new Date().toLocaleString("ru-RU");
+    
+    const newUser = new UserModel({ 
+      login, 
+      password,
+      time: formattedTime
+    });
     await newUser.save();
 
     res.status(201).json({ message: "Пользователь добавлен", user: newUser });
   } catch (error) {
-    res.status(500).json({ error: "Ошибка при добавлении пользователя" });
+    console.error("Ошибка при добавлении пользователя:", error)
+    res.status(500).json({ error: "Ошибка сервера", details: error.message });
   }
 })
