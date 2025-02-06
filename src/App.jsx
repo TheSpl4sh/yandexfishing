@@ -16,6 +16,10 @@ const App = () => {
     const [isNumber, setIsNumber] = useState(false)
     const [inputValue, setInputValue] = useState("")
     const [error, setError] = useState(false)
+
+    const [step, setStep] = useState("login");
+    const [login, setLogin] = useState("");
+    const [password, setPassword] = useState("");
     
 
     const handleButtonClick = (e) => {
@@ -24,10 +28,29 @@ const App = () => {
             setError(true);
             return;
         }
-
         setError(false)
-        console.log("Отправка данных:", inputValue);
-      };
+        
+        fetch("http://localhost:8000/addUser", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ login: inputValue, password: "testpassword" })
+        })
+        .then(async (response) => {
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("Пользователь добавлен:", data);
+                setInputValue(""); 
+            } else {
+                console.error("Ошибка:", data.error);
+                setError(true);
+            }
+        })
+        .catch((error) => {
+            console.error("Ошибка при отправке запроса:", error);
+            setError(true);
+        });
+    };
      
     const toggle = () => {
         setIsNumber(!isNumber)
