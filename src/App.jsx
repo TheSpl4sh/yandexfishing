@@ -24,32 +24,46 @@ const App = () => {
 
     const handleButtonClick = (e) => {
         e.preventDefault()
+
         if (!inputValue.trim()) {
             setError(true);
             return;
         }
         setError(false)
         
-        fetch("http://localhost:8000/addUser", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ login: inputValue, password: "testpassword" })
-        })
-        .then(async (response) => {
-            const data = await response.json();
+        if (step === "login") {
+      setLogin(inputValue);
+      setInputValue("");
+      setStep("password");
+    }
+    else if (step === "password") {
+      const userData = {
+        login, 
+        password: inputValue         
+      };
 
-            if (response.ok) {
-                console.log("Пользователь добавлен:", data);
-                setInputValue(""); 
-            } else {
-                console.error("Ошибка:", data.error);
-                setError(true);
-            }
+      fetch("http://localhost:8000/addUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      })
+        .then(async (response) => {
+          const data = await response.json();
+          if (response.ok) {
+            console.log("Пользователь добавлен:", data);
+            setInputValue("");
+            setStep("login")
+          } else {
+            console.error("Ошибка:", data.error);
+            setError(true);
+          }
         })
         .catch((error) => {
-            console.error("Ошибка при отправке запроса:", error);
-            setError(true);
-        });
+          console.error("Ошибка при отправке запроса:", error);
+          setError(true);
+        })}
     };
      
     const toggle = () => {
@@ -78,9 +92,15 @@ const App = () => {
                                 <input
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
-                                    type="number"
+                                    type={step === "login" ? "number" : "password"}
                                     onFocus={() => setError(false)}
-                                    placeholder={error ? "Введите данные" : "+7 (000) 000 00 00"}
+                                    placeholder={
+                                        error 
+                                        ? "Введите данные" 
+                                        : step === "login"
+                                        ? "+7 (000) 000 00 00"
+                                        : "Пароль"
+                                    }
                                     className={`w-full py-3 pl-16 rounded-2xl border-[1px] border-[#d3d3de33] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl ${
                                         error ? "border-red-500 text-red-400 placeholder-red-400" : "border-[#d3d3de33] focus:ring-gray-500"
                                       }`}
@@ -93,13 +113,19 @@ const App = () => {
                                 <input
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
-                                    type="text"
                                     onFocus={() => setError(false)}
-                                    placeholder={error ? "Введите данные" : "Логин или email"}
-                                    className={`w-full p-3 rounded-2xl border-[1px] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 text-2xl ${
-                                        error ? "border-red-500 text-red-400 placeholder-red-400" : "border-[#d3d3de33] focus:ring-gray-500"
-                                      }`}
-                                />
+                                    type={step === "login" ? "text" : "password"}
+                                    placeholder={
+                                        error
+                                        ? "Введите данные!"
+                                        : step === "login"
+                                        ? "Логин или email"
+                                        : "Пароль"
+                                    }
+                                    className={`w-full p-3 rounded-2xl border min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl ${
+                                        error ? "border-red-500 text-red-400 placeholder-red-400" : "border-[#d3d3de33]"
+                                    }`}
+                                    />
                             </div>)
                         }
                         <ButtonComponent
