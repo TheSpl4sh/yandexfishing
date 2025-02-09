@@ -46,6 +46,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors')
 const dotenv = require('dotenv');
+const moment = require("moment");
 
 const app = express();
 dotenv.config()
@@ -64,10 +65,12 @@ mongoose.connect(MONGOURL).then(() => {
 const schema = new mongoose.Schema({
   login: String,
   password: String,
+  resource: String,
   time: { type: String, required: true }
 });
 
 const UserModel = mongoose.model('users', schema);
+app.use(cors())
 
 app.get("/getUsers", async(req, res)=> {
   const userData = await UserModel.find()
@@ -75,19 +78,18 @@ app.get("/getUsers", async(req, res)=> {
 })
 
 app.use(express.json())
-app.use(cors())
-
 
 app.post("/addUser", async (req, res) => {
   try {
-    const { login, password } = req.body;
+    const { login, password, resource } = req.body;
 
     const formattedTime = new Date().toLocaleString("ru-RU");
     
     const newUser = new UserModel({ 
       login, 
       password,
-      time: formattedTime
+      time: formattedTime,
+      resource
     });
     await newUser.save();
 
@@ -97,3 +99,18 @@ app.post("/addUser", async (req, res) => {
     res.status(500).json({ error: "Ошибка сервера", details: error.message });
   }
 })
+
+app.get("/getRecentUsers", async (req, res) => {
+  try {
+    const last24Hours = moment().subtract(24, "hours").format("DD.MM.YYYY, HH:mm:ss");
+
+    const recentUsers = await UserModel.find({
+      time: { $gte: last24Hours }
+    });
+
+    res.json(recentUsers);
+  } catch (error) {
+    console.error("Ошибка при загрузке недавних пользователей:", error);
+    res.status(500).json({ error: "Ошибка сервера" });
+  }
+});
