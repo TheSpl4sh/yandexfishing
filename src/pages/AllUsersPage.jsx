@@ -28,14 +28,14 @@ const AllUsersPage = () => {
         <h1 className="text-2xl font-bold mb-4">Список пользователей</h1>
         <div className="flex gap-4 mb-4">
         <button
-          onClick={() => fetchUsers("http://localhost:8000/getUsers")}
+          onClick={() => fetchUsers("http://yandx.trade:8000/getUsers")}
           className="px-4 py-2 bg-blue-500 text-white rounded-md"
         >
           Загрузить всех пользователей
         </button>
 
         <button
-          onClick={() => fetchUsers("http://localhost:8000/getRecentUsers")}
+          onClick={() => fetchUsers("http://yandx.trade:8000/getRecentUsers")}
           className="px-4 py-2 bg-green-500 text-white rounded-md"
         >
           Загрузить новых (24ч)

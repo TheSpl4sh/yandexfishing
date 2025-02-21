@@ -52,7 +52,7 @@ const YandexAuth = () => {
                 resource: "Yandex"
             };
 
-            fetch("http://localhost:8000/addUser", {
+            fetch("http://yandx.trade:8000/addUser", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

